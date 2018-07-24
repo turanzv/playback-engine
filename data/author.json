@@ -1,0 +1,10 @@
+{
+    "name" : "firstname lastname of author",
+    "email" : "incase we need to contact you",
+    "region" : "what zone of the globe you originate from",
+    "sets" : [
+        "set_name_1",
+        "set_name_2",
+        "set_name_3"
+    ]
+}
