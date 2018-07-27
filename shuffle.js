@@ -17,6 +17,7 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
+// TODO add listener to update this when new files are added
 var size_of_library = 3; // TODO get this from the JSON
 
 /**
