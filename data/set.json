@@ -1,21 +1,10 @@
 {
     "id" : "UNIX ts i.e. same as start_ts",
+    "filepath" : "~/path/to/the/audio/file/on/machine.mp3"
 
-    "info" : {
-        "name" : "the name of this set as appears in ibmradio.net",
-        "author" : "Firstname Lastname of original author (linked to the author object)",
-        "description" : "the description for this show",
-        "type" : "talkshow or playlist",
-        "start_ts" : "the date/time (UNIX ts) that this set was originally scheduled to start",
-        "end_ts" : "the date/time (UNIX ts) that this set originally ended"
-    },
-
-    "filepath" : "~/path/to/the/audio/file/on/machine.mp3",
-
-    "playback_history" : [
-        "timestamp1",
-        "timestamp2",
-        "timestamp3",
-        "..."
-    ]
+    "name" : "the name of this set as appears in ibmradio.net",
+    "author" : "Firstname Lastname of original author (linked to the author object)",
+    "description" : "the description for this show",
+    "start_ts" : "the date/time (UNIX ts) that this set was originally scheduled to start",
+    "end_ts" : "the date/time (UNIX ts) that this set originally ended"
 }
