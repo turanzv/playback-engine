@@ -8,12 +8,14 @@
  *    played once! reset all indicators and continue
 */ 
 
-let Afplay = require('afplay');
- 
-// Instantiate a new player
-const player = new Afplay;
+const Afplay = require('afplay');
 const fs = require('fs');
 const path = require('path');
+const mm = require('music-metadata');
+
+
+// Instantiate a new player
+const player = new Afplay;
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
@@ -21,47 +23,6 @@ function getRandomInt(max) {
 
 let size_of_library = 5; // TODO get this from JSON
 let num_played = 0;
-
-var library = JSON.parse("{\n" +
-    "  \"stuff\": [\n" +
-    "    {\n" +
-    "      \"id\": \"1\",\n" +
-    "      \"filepath\": \"music/720.mp3\"\n" +
-    "    },\n" +
-    "    {\n" +
-    "      \"id\": \"2\",\n" +
-    "      \"filepath\": \"Aux Cord Jams_1532372400.mp3\"\n" +
-    "    },\n" +
-    "    {\n" +
-    "      \"id\": \"3\",\n" +
-    "      \"filepath\": \"in.mp3\"\n" +
-    "    },\n" +
-    "    {\n" +
-    "      \"id\": \"4\",\n" +
-    "      \"filepath\": \"Live_Intern Hour_1532635200.mp3\"\n" +
-    "    },\n" +
-    "    {\n" +
-    "      \"id\": \"5\",\n" +
-    "      \"filepath\": \"Live_it's eclectic_1532102400.mp3\"\n" +
-    "    }\n" +
-    "  ]\n" +
-    "}");
-var queue = [];
-/*
-fs.readFile("data/library.json", function (err, data) {
-    if (err) throw err;
-    library = JSON.parse(data);
-    // console.log(library);
-});
-fs.readFile("data/queue.json", function (err, data) {
-    if (err) throw err;
-    queue = JSON.parse(data);
-    // console.log(queue);
-});
-*/
-
-console.log(library);
-console.log(queue);
 
 // console.log(library.stuff);
 
@@ -72,34 +33,54 @@ console.log(queue);
  * @param {JSONObject} rotation_history 
  */
 
-function shuffle(library) {
-    // TODO = stagger the playtimes so there's a buffer zone between songs to allow for potentially long file I/O work
-    // generate random set choice
-    let choice = getRandomInt(size_of_library-1);
+function shuffle() {
+    // TODO = stagger the playtime so there's a buffer zone between songs to allow for potentially long file I/O work
 
-    // verify validity of choice by looking it up in the rotation history
-    let filepath_ = library.stuff[num_played].filepath;
-    // if necessary, reset rotation history by changing up the JSON attributes
+    //read directory
+    fs.readdir('music', (err, stats) => {
+        //while there are still songs to play
+        while (stats.indexOf('.DS_Store') != -1){
+            stats.splice(stats.indexOf('.DS_Store'), 1);
+        }
+        console.log('These are the stats: ', stats)
+        while (stats.length > 0) {
+            // get random song choice
+            let index = getRandomInt(size_of_library - 1);
+            filepath_ = 'music/' + stats[index];
+            fs.exists(filepath_, (exists) => {
+                console.log('checking is The file exists: ', exists);
+            });
 
+            console.log('this is what is playing: ', filepath_);
 
-    player.play(filepath_, {time: 5})
-        .then(() => {
-            // mark song as played
-            num_played++;
-            shuffle(library);
-            // increment total play count
+            // read id3 metadata
+            mm.parseFile(filepath_, {native: true})
+                .then()
+                .catch();
 
-            // recursive call
-        })
-        .catch(error => {
-            // TODO refactor to change behavior after certain number of retries?
-            console.log('Playback error. Re-trying ... ');
-            // recursive call
-
-        });
+            // play random song
+            let busy = true
+            player.play(filepath_, {/*volume: 50,*/ time: 5})
+                .then(() => {
+                    busy = false;
+                    console.log('busy has been set to false'); // this isn't working
+                })
+                .catch(error => {
+                    // TODO refactor to change behavior after certain number of retries?
+                    console.log(error)
+                    console.log('Playback error: ', stats[index]);
+                    busy = false;
+                });
+            // remove song from queue
+            if(busy) {
+                console.log('busy is true');
+            } else {
+                console.log('busy is false');
+            }
+            stats.splice(index, 1);
+        }
+        // TODO play after stats is drained
+    });
 }
 
-shuffle(library);
-
-
-
+shuffle();

@@ -24,13 +24,13 @@ fs.watch('music/', (eventType, filename) => {
         //TODO check if the MP3 exists in JSON
 
         //TODO update JSON, size of the library
-
     }
 });
 
 function updateSets() {
     // read music directory
-    let yay = fs.readdir('music', (err, stats) => {
+    let filesystem = 0;
+    fs.readdir('music', (err, stats) => {
         for (let i = 0; i < stats.length; i ++) {
             let file = stats[i];
             // skip hidden files
@@ -44,6 +44,7 @@ function updateSets() {
                 continue;
             }
         }
+        // filesystem = stats
     });
 }
 
